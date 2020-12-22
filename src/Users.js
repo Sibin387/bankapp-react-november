@@ -4,15 +4,31 @@ import Bank from './Bank';
 import swal from 'sweetalert';
 
 class Users extends React.Component{
+    state = {
+        users:[]
+    }
     deleteUser=(username)=>{
-        Bank.deleteUser(username);
-        swal("Success!", "User deleted successfully", "success");
-        this.setState({
-            
+        Bank.deleteUser(username)
+        .then(data=>{
+            swal("Success!", "User deleted successfully", "success");
+            this.getUsers();
+        })
+        .catch(err=>{
+            swal("Error!", "An error has occured", "error");
         });
     }
+    getUsers = ()=>{
+        Bank.getUsers()
+        .then(response=>{
+            this.setState({
+                users:response.data.users
+            });
+        })
+    }
+    componentDidMount(){
+        this.getUsers();
+    }
     render(){
-        let users = Bank.getUsers();
         return (<div className="container">
                 <h1>Users</h1>
                 <table className="table">
@@ -24,10 +40,10 @@ class Users extends React.Component{
                     </thead>
                     <tbody>
                         {
-                            Object.keys(users).map(key=><tr>
-                                <td>{users[key].username}</td>
-                                <td>{users[key].balance}</td>
-                                <td onClick={()=>{this.deleteUser(key)}}>Delete</td>
+                            this.state.users.map(user=><tr>
+                                <td>{user.username}</td>
+                                <td>{user.balance}</td>
+                                <td onClick={()=>{this.deleteUser(user.username)}}>Delete</td>
                             </tr>)
                         }
                     </tbody>

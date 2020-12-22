@@ -1,4 +1,5 @@
-
+import axios from 'axios';
+const baseUrl = "http://localhost:4000";
 let data={ 
     sreedevi:{username:"sreedevi",password:"abc123",acno:1001,balance:50000, history:[]},
     test1:{username:"test1",password:"test1",acno:1002,balance:5000, history:[]},
@@ -31,11 +32,37 @@ class Bank{
         return data[Bank.getCurrentUser()].history;
     }
     static getUsers(){
-        return data;
+        return axios.get(baseUrl+"/users", { withCredentials:true });
     }
     static deleteUser(username){
-        delete data[username];
-        Bank.saveData();
+        return axios.delete(baseUrl+"/users/"+username, { withCredentials:true });
+    }
+    static login(username, password){
+        return axios.post(baseUrl+"/users/login",{
+            username,
+            password
+        }, { withCredentials:true });
+    }
+    static register(username, password, confirmPassword, acno){
+        return axios.post(baseUrl+"/users/register",{
+            username,
+            password,
+            confirmPassword,
+            acno
+        })
+    }
+    static deposit(username, amount){
+        return axios.post(baseUrl+"/users/deposit",{
+            username,amount
+        }, { withCredentials:true });
+    }
+    static withdraw(username, amount){
+        return axios.post(baseUrl+"/users/withdraw",{
+            username,amount
+        }, { withCredentials:true });
+    }
+    static history(){
+        return axios.get(baseUrl+"/users/transaction-history", { withCredentials:true });
     }
 }
 

@@ -3,11 +3,11 @@ import { withRouter } from 'react-router';
 import Bank from './Bank';
 
 class TransactionHistory extends React.Component{
-    delete=()=>{
-
+    state = {
+        history:[]
     }
+
     render(){
-        let history = Bank.getHistory();
         return (<div className="container">
                 <h1>Transaction history</h1>
                 <table className="table">
@@ -16,7 +16,11 @@ class TransactionHistory extends React.Component{
                         <th>Amount</th>
                     </tr>
                     {
-                        history.map(item=><tr>
+                        this.state.history.length==0?<tr>
+                        <td>No transactions</td></tr>:null
+                    }
+                    {
+                        this.state.history.map(item=><tr>
                             <td>{item.typeOfTransaction}</td>
                             <td>{item.amount}</td>
                         </tr>)
@@ -24,6 +28,13 @@ class TransactionHistory extends React.Component{
                 </table>
             </div>
         )
+    }
+
+    componentDidMount(){
+        Bank.history()
+        .then(response=>{
+            this.setState({history:response.data.history});
+        })
     }
 }
 
